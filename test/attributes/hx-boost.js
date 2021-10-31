@@ -84,5 +84,24 @@ describe("hx-boost attribute", function() {
         btn.innerHTML.should.equal("Boosted!");
     });
 
-});
 
+    it('boosting, a tags and hx-get play nice together', function()
+       {
+           this.server.respondWith("GET", "/test-page", "page");
+           this.server.respondWith("GET", "/test-xhr", "ajax");
+           var btn = make('<div hx-boost="true"><div hx-get="/test-xhr" hx-trigger="revealed"><a hx-target="this" href="/test-page">Click Me!</a></div></div>');
+           var link = btn.querySelector('a');
+           link.click();
+           this.server.respond();
+           link.innerHTML.should.equal("page");
+
+
+           var btn = make('<div hx-boost="true"><div hx-get="/test-xhr" hx-trigger="revealed" hx-swap="afterend"><a hx-target="this" href="/test-page">Click Me (with swap)!</a></div></div>');
+           var link = btn.querySelector('a');
+           link.click();
+           this.server.respond();
+           link.innerHTML.should.equal("page");
+       });
+
+
+});
